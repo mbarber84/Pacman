@@ -89,6 +89,23 @@ public class Model extends JPanel implements ActionListener {
         ghost = new ImageIcon("\"C:\\Users\\mbarb\\Desktop\\Pacman\\src\\images\\ghost.gif\"").getImage();
         heart = new ImageIcon("\"C:\\Users\\mbarb\\Desktop\\Pacman\\src\\images\\heart.gif\"").getImage();
     }
+    
+    public void showIntroScreen(Graphics2D g2d){
+        String start = "Press SPACE BAR to start";
+        g2d.setColor(Color.red);
+        g2d.drawString(start, SCREEN_SIZE / 4, 150);
+    }
+    
+    public void drawScore(Graphics2D g2d){
+        g2d.setFont(smallFont);
+        g2d.setColor(Color.yellow);
+        String s = "Score: " + score;
+        g2d.drawString(s, SCREEN_SIZE / 2 + 96, SCREEN_SIZE + 16);
+        
+        for(int i = 0; i < lives; i++){
+            g2d.drawImage(heart, i * 28 + 8, SCREEN_SIZE + 1, this);
+        }
+    }
 
     private void initVariables() {
         screenData = new short[N_BLOCKS * N_BLOCKS];
