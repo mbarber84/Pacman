@@ -4,6 +4,7 @@
  */
 package pacman;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -245,7 +246,37 @@ public class Model extends JPanel implements ActionListener {
         g2d.drawImage(ghost, x, y, this);
     }
     
+    public void checkMaze(){//is level completed
+        int i = 0;
+        boolean finished = true;
+        
+        while(i < N_BLOCKS * N_BLOCKS && finished){
+            if((screenData[i] & 48) != 0){
+                finished = false;
+            }
+        }i++;
+        
+        //if level is completed increase speed of player and ghosts
+        if(finished){
+            score += 50;
+            
+            if(N_GHOSTS < MAX_GHOSTS){
+                N_GHOSTS++;
+            }
+            if(currentSpeed < maxSpeed){
+                currentSpeed++;
+            }
+        }   initLevel();
+    }
     
+    private void death(){
+        lives--;
+        if(lives == 0){
+            inGame = false;
+        }
+        
+        continueLevel();
+    }
 
     private void continueLevel() {
         int dx = 1;
@@ -274,12 +305,48 @@ public class Model extends JPanel implements ActionListener {
         req_dy = 0;
         dying = false;
     }
+    
+    public void drawMaze(Graphics2D g2d){
+        short i = 0;
+        int x,y;
+        
+        for(y = 0; y < SCREEN_SIZE; y += BLOCK_SIZE){
+            for(x = 0; x < SCREEN_SIZE; x += BLOCK_SIZE){
+                g2d.setColor(new Color(170,7,219));
+                g2d.setStroke(new BasicStroke(5));
+                
+                if((screenData[i] == 0)){
+                    g2d.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+                }
+                if((screenData[i] & 1) != 0){//left border
+                    g2d.drawLine(x, y, x, y + BLOCK_SIZE - 1);
+                }
+                if((screenData[i] & 2) != 0){//top border
+                    g2d.drawLine(x, y, x + BLOCK_SIZE - 1, y);
+                }
+                if((screenData[i] & 4) != 0){//right border
+                    g2d.drawLine(x + BLOCK_SIZE -1, y, x + BLOCK_SIZE -1, y + BLOCK_SIZE -1);
+                }
+                if((screenData[i] & 8) != 0){//bottom border
+                    g2d.drawLine(x, y + BLOCK_SIZE -1, x + BLOCK_SIZE -1, y + BLOCK_SIZE -1);
+                }
+                if((screenData[i] & 16) != 0){//white dot
+                    g2d.setColor(new Color(255,255,255));
+                    g2d.fillOval(x+10, y+10, 6, 6);
+                }
+                i++;
+            }
+        }
+    }
+    
+    
+    
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.DARK_GRAY);
+        g2d.setColor(new Color(21,219,7));
         g2d.fillRect(0, 0, d.width, d.height);
 
         drawMaze(g2d);
